@@ -34,9 +34,9 @@ const cssIdentifier = PRODUCTION ? '[hash:base64:10]' : '[path][name]---[local]'
 
 const cssLoader = PRODUCTION
 	? ExtractTextPlugin.extract({
-		use: 'css-loader?localIdentName=' + cssIdentifier
+		use: ['css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
  	})
- 	: ['style-loader', 'css-loader?localIdentName=' + cssIdentifier]
+ 	: ['style-loader', 'css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
 
 module.exports = {
 	// externals: {
@@ -51,17 +51,17 @@ module.exports = {
 		filename: PRODUCTION ? 'bundle.[hash:12].min.js' : 'bundle.js'
 	},
 	module: {
-		loaders: [{
+		rules: [{
 			test: /\.js$/,
-			loaders: ['babel-loader'],
+			use: ['babel-loader'],
 			exclude: /node_modules/
 		}, {
 			test: /\.(png|jpg|gif)$/,
-			loaders: ['url-loader?limit=216000&name=images/[hash:12].[ext]'],
+			use: ['url-loader?limit=216000&name=images/[hash:12].[ext]'],
 			exclude: /node_modules/
 		},{
-			test: /\.css$/,
-			loaders: cssLoader,
+			test: /\.(css|scss)$/,
+			use: cssLoader,
 			exclude: /node_modules/
 		}]
 	}
