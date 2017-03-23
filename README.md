@@ -3,7 +3,7 @@ This is a boilerplate project working as a starter using webpack.
 
 Here are some guidelines on how to put this project into use.
 
-To get started, cd into the project root directory, then
+To get started, cd into the project root directory, then `npm install` to install dependencies.
 
 _**For development**_, run
 ```
@@ -11,7 +11,7 @@ npm run dev
 ```
 Launch the browser of your choice and visit **localhost:8080**.
 
-_**For production**_
+_**For production**_, run
 ```
 npm run build
 ```
