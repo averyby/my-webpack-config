@@ -42,9 +42,9 @@ const cssLoader = PRODUCTION
  	: ['style-loader', 'css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
 
 module.exports = {
-	// externals: {
-	// 	'jquery': 'jQuery'
-	// },
+	externals: {
+		'jquery': 'jQuery'
+	},
 	devtool: 'source-map',
 	entry: entry,
 	plugins: plugins,
