@@ -25,7 +25,10 @@ var plugins = PRODUCTION
 		}),
 		new ExtractTextPlugin('style-[contenthash:10].css'),
 		new HTMLWebpackPlugin({
-			template: 'index-template.html'
+			template: 'index-template.html',
+			minify: {
+				collapseWhitespace: true
+			}
 		})
 	 ]
 	: [ new webpack.HotModuleReplacementPlugin() ];
