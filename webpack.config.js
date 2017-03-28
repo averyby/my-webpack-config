@@ -5,14 +5,6 @@ var HTMLWebpackPlugin = require('html-webpack-plugin');
 
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
 const PRODUCTION = process.env.NODE_ENV === 'production';
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-var entry = PRODUCTION 
-	? [ './src/index.js' ]
-	: [
-		'./src/index.js',
-		'webpack/hot/dev-server',
-		'webpack-dev-server/client?http://localhost:8080'
-	];
 
 var plugins = PRODUCTION
 	? [
@@ -25,13 +17,21 @@ var plugins = PRODUCTION
 		}),
 		new ExtractTextPlugin('style-[contenthash:10].css'),
 		new HTMLWebpackPlugin({
-			template: 'index-template.html',
+			template: './index-template.html',
 			minify: {
 				collapseWhitespace: true
 			}
 		})
 	 ]
-	: [ new webpack.HotModuleReplacementPlugin() ];
+	: [ 
+		new HTMLWebpackPlugin({
+			template: './index-template.html',
+			minify: {
+				// collapseWhitespace: true
+			}
+		}),
+		new webpack.HotModuleReplacementPlugin() 
+	];
 
 const cssIdentifier = PRODUCTION ? '[hash:base64:10]' : '[path][name]---[local]';
 
@@ -42,16 +42,22 @@ const cssLoader = PRODUCTION
  	: ['style-loader', 'css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
 
 module.exports = {
+    entry: './src/index.js',
 	externals: {
 		'jquery': 'jQuery'
 	},
 	devtool: 'source-map',
-	entry: entry,
 	plugins: plugins,
 	output: {
 		path: path.join(__dirname, 'dist'),
-		publicPath: PRODUCTION ? '/' : '/dist/',
+		publicPath: '/',
 		filename: PRODUCTION ? 'bundle.[hash:12].min.js' : 'bundle.js'
+	},
+	devServer: {
+		contentBase: path.join(__dirname, './'),
+		compress: true,
+		port: 9000,
+		open: true
 	},
 	module: {
 		rules: [{
