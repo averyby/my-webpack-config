@@ -21,10 +21,16 @@ var plugins = {
         }),
         new HTMLWebpackPlugin({
             template: './index-template.html',
+            // commons should be included before app, 
+            // but html webpack plugin will take care of this.
+            chunks: ['app', 'commons'], 
             minify: {
                 collapseWhitespace: isProd
             }
          }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'commons'
+        }),
         new AddAssetHtmlPlugin({
             includeSourcemap: !isProd,
             hash: true,
@@ -33,7 +39,7 @@ var plugins = {
     ],
     prod: [
         new webpack.optimize.UglifyJsPlugin({
-        	sourceMap: false,
+            sourceMap: false,
             //comments: true,
             //mangle: false,
             //compress: {
@@ -50,38 +56,41 @@ var plugins = {
 };
 
 module.exports = {
-    entry: './src/index.js',
-//	externals: {
-//		'jquery': 'jQuery'
-//	},
-	devtool: 'source-map',
-	plugins: plugins.commons.concat(isProd ? plugins.prod : plugins.dev),
-	output: {
-		path: path.join(__dirname, 'dist'),
-		publicPath: '/',
-		filename: isProd ? 'bundle.[hash:12].min.js' : 'bundle.js'
-	},
-	devServer: {
-		contentBase: path.join(__dirname, './'),
-		compress: true,
-		port: 9000,
-		open: true,
+    entry: {
+        app: './src/index.js',
+        about: './src/about.js',
+    },
+//  externals: {
+//      'jquery': 'jQuery'
+//  },
+    devtool: 'source-map',
+    plugins: plugins.commons.concat(isProd ? plugins.prod : plugins.dev),
+    output: {
+        path: path.join(__dirname, 'dist'),
+        publicPath: '/',
+        filename: isProd ? '[name].bundle.[hash:12].min.js' : '[name].bundle.js'
+    },
+    devServer: {
+        contentBase: path.join(__dirname, './'),
+        compress: true,
+        port: 9000,
+        open: true,
         hot: true,
         stats: 'errors-only'
-	},
-	module: {
-		rules: [{
-			test: /\.js$/,
-			use: ['babel-loader'],
-			exclude: /node_modules/
-		}, {
-			test: /\.(png|jpg|gif)$/,
-			use: ['url-loader?limit=216000&name=images/[hash:12].[ext]'],
-			exclude: /node_modules/
-		},{
-			test: /\.(css|scss)$/,
-			use: cssConfig,
-			exclude: /node_modules/
-		}]
-	}
+    },
+    module: {
+        rules: [{
+            test: /\.js$/,
+            use: ['babel-loader'],
+            exclude: /node_modules/
+        }, {
+            test: /\.(png|jpg|gif)$/,
+            use: ['url-loader?limit=216000&name=images/[hash:12].[ext]'],
+            exclude: /node_modules/
+        },{
+            test: /\.(css|scss)$/,
+            use: cssConfig,
+            exclude: /node_modules/
+        }]
+    }
 };
