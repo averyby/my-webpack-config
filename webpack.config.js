@@ -2,36 +2,47 @@ var path = require('path');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
+var AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const DEVELOPMENT = process.env.NODE_ENV === 'development';
 const PRODUCTION = process.env.NODE_ENV === 'production';
 
-var plugins = PRODUCTION
-	? [
-		new webpack.optimize.UglifyJsPlugin({
-			// comments: true,
-			// mangle: false,
-			// compress: {
-			// 	warnings: true
-			// }
-		}),
-		new ExtractTextPlugin('style-[contenthash:10].css'),
-		new HTMLWebpackPlugin({
-			template: './index-template.html',
-			minify: {
-				collapseWhitespace: true
-			}
-		})
-	 ]
-	: [ 
-		new HTMLWebpackPlugin({
-			template: './index-template.html',
-			minify: {
-				// collapseWhitespace: true
-			}
-		}),
-		new webpack.HotModuleReplacementPlugin() 
-	];
+var plugins = {
+    commons: [
+        new webpack.DllReferencePlugin({
+            context: path.join(__dirname),
+            manifest: require('./build/vendor-manifest.json'),
+        }),
+        new HTMLWebpackPlugin({
+            template: './index-template.html',
+            minify: {
+                collapseWhitespace: PRODUCTION ? false : false
+            }
+         }),
+        new AddAssetHtmlPlugin({
+            includeSourcemap: PRODUCTION ? false : true,
+            hash: true,
+            filepath: require.resolve('./build/vendor.dll.js'),
+        }),
+    ],
+    prod: [
+        new webpack.optimize.UglifyJsPlugin({
+        	sourceMap: false,
+            //comments: true,
+            //mangle: false,
+            //compress: {
+            //    warnings: true
+            //}
+        }),
+        new ExtractTextPlugin('style-[contenthash:10].css'),
+        new FaviconsWebpackPlugin('./my-logo.jpg')
+    ],
+    dev: [
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NamedModulesPlugin()
+    ]
+};
 
 const cssIdentifier = PRODUCTION ? '[hash:base64:10]' : '[path][name]---[local]';
 
@@ -43,11 +54,11 @@ const cssLoader = PRODUCTION
 
 module.exports = {
     entry: './src/index.js',
-	externals: {
-		'jquery': 'jQuery'
-	},
+//	externals: {
+//		'jquery': 'jQuery'
+//	},
 	devtool: 'source-map',
-	plugins: plugins,
+	plugins: plugins.commons.concat(PRODUCTION ? plugins.prod : plugins.dev),
 	output: {
 		path: path.join(__dirname, 'dist'),
 		publicPath: '/',
@@ -57,7 +68,9 @@ module.exports = {
 		contentBase: path.join(__dirname, './'),
 		compress: true,
 		port: 9000,
-		open: true
+		open: true,
+        hot: true,
+        stats: 'errors-only'
 	},
 	module: {
 		rules: [{
