@@ -5,8 +5,13 @@ var HTMLWebpackPlugin = require('html-webpack-plugin');
 var AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
-const DEVELOPMENT = process.env.NODE_ENV === 'development';
-const PRODUCTION = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV === 'production'; //true or false
+const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
+const cssDev = ['style-loader', 'css-loader', 'sass-loader?localIdentName=' + cssIdentifier];
+const cssProd = ExtractTextPlugin.extract({
+        use: ['css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
+});
+const cssConfig = isProd ? cssProd : cssDev;
 
 var plugins = {
     commons: [
@@ -17,11 +22,11 @@ var plugins = {
         new HTMLWebpackPlugin({
             template: './index-template.html',
             minify: {
-                collapseWhitespace: PRODUCTION ? false : false
+                collapseWhitespace: isProd
             }
          }),
         new AddAssetHtmlPlugin({
-            includeSourcemap: PRODUCTION ? false : true,
+            includeSourcemap: !isProd,
             hash: true,
             filepath: require.resolve('./build/vendor.dll.js'),
         }),
@@ -44,25 +49,17 @@ var plugins = {
     ]
 };
 
-const cssIdentifier = PRODUCTION ? '[hash:base64:10]' : '[path][name]---[local]';
-
-const cssLoader = PRODUCTION
-	? ExtractTextPlugin.extract({
-		use: ['css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
- 	})
- 	: ['style-loader', 'css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
-
 module.exports = {
     entry: './src/index.js',
 //	externals: {
 //		'jquery': 'jQuery'
 //	},
 	devtool: 'source-map',
-	plugins: plugins.commons.concat(PRODUCTION ? plugins.prod : plugins.dev),
+	plugins: plugins.commons.concat(isProd ? plugins.prod : plugins.dev),
 	output: {
 		path: path.join(__dirname, 'dist'),
 		publicPath: '/',
-		filename: PRODUCTION ? 'bundle.[hash:12].min.js' : 'bundle.js'
+		filename: isProd ? 'bundle.[hash:12].min.js' : 'bundle.js'
 	},
 	devServer: {
 		contentBase: path.join(__dirname, './'),
@@ -83,7 +80,7 @@ module.exports = {
 			exclude: /node_modules/
 		},{
 			test: /\.(css|scss)$/,
-			use: cssLoader,
+			use: cssConfig,
 			exclude: /node_modules/
 		}]
 	}
