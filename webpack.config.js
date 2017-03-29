@@ -7,9 +7,9 @@ var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
 const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
-const cssDev = ['style-loader', 'css-loader', 'sass-loader?localIdentName=' + cssIdentifier];
+const cssDev = ['style-loader', 'css-loader?localIdentName=' + cssIdentifier, 'sass-loader'];
 const cssProd = ExtractTextPlugin.extract({
-        use: ['css-loader', 'sass-loader?localIdentName=' + cssIdentifier]
+        use: ['css-loader?localIdentName=' + cssIdentifier,  'sass-loader']
 });
 const cssConfig = isProd ? cssProd : cssDev;
 
