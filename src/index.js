@@ -4,11 +4,13 @@ import $ from 'jquery';
 
 var style = require('./style/globalStyle.scss');
 
-$('#app').html(`
-	<div class=${style.box}>
-		<p>3 * 4 = ${multiply(3, 4)}</p>
-	</div>
-`);
+import React from 'react';
+import ReactDOM  from 'react-dom';
+
+ReactDOM.render(
+	<h1>Hello, world!</h1>,
+	document.getElementById('app')
+);
 
 if (module.hot) {
 	module.hot.accept()

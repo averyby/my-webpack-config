@@ -38,6 +38,11 @@ var plugins = {
         }),
     ],
     prod: [
+        new webpack.DefinePlugin({
+            "process.env": { 
+                NODE_ENV: JSON.stringify("production") 
+            }
+        }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: false,
             //comments: true,
@@ -59,6 +64,7 @@ module.exports = {
     entry: {
         app: './src/index.js',
         about: './src/about.js',
+        commons: ['react', 'react-dom']
     },
 //  externals: {
 //      'jquery': 'jQuery'
