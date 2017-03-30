@@ -5,7 +5,7 @@ const PRODUCTION = process.env.NODE_ENV === 'production';
 
 const webpackConfig = {
     entry: {
-        vendor: ['jquery', 'react'],
+        vendor: ['jquery', 'react', 'react-dom'],
     },
     devtool: 'source-map',
     output: {

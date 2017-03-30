@@ -4,6 +4,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var HTMLWebpackPlugin = require('html-webpack-plugin');
 var AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+var Visualizer = require('webpack-visualizer-plugin');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
 const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
@@ -36,6 +37,7 @@ var plugins = {
             hash: true,
             filepath: require.resolve('./build/vendor.dll.js'),
         }),
+        new Visualizer()
     ],
     prod: [
         new webpack.DefinePlugin({
