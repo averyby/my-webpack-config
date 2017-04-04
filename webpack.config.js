@@ -6,6 +6,8 @@ var AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 var Visualizer = require('webpack-visualizer-plugin');
 var bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
+const glob = require('glob');
+const PurifyCSSPlugin = require('purifycss-webpack');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
 const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
@@ -26,7 +28,7 @@ var plugins = {
             template: './index-template.html',
             // commons should be included before app, 
             // but html webpack plugin will take care of this.
-            chunks: ['app', 'commons'], 
+            chunks: ['app', 'commons'], // select the entry items to include
             minify: {
                 collapseWhitespace: isProd
             }
@@ -60,6 +62,12 @@ var plugins = {
             //    warnings: true
             //}
         }),
+         // Make sure this is after ExtractTextPlugin!
+        new PurifyCSSPlugin({
+            // Give paths to parse for rules. These should be absolute!
+            paths: glob.sync(path.join(__dirname, './*.html')),
+            minimize: true
+        }),
         new FaviconsWebpackPlugin('./my-logo.jpg')
     ],
     dev: [
@@ -70,7 +78,10 @@ var plugins = {
 
 module.exports = {
     entry: {
-        app: './src/index.js',
+        // According to HtmlWebpackPlugin config, it's possible that 
+        // not all entry chunks are included into index.html
+        app: ['bootstrap-loader', './src/index.js'], // Since we're only including app and commons chunks,
+        // we'll have to specify bootstrap-loader in the app chunk in order for bootstrap to get applied.
         about: './src/about.js',
         bootstrap: bootstrapConfig,
         commons: ['react', 'react-dom']
