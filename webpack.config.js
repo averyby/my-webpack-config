@@ -6,6 +6,8 @@ var AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 var Visualizer = require('webpack-visualizer-plugin');
 var bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
+const glob = require('glob');
+const PurifyCSSPlugin = require('purifycss-webpack');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
 const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
@@ -59,6 +61,12 @@ var plugins = {
             //compress: {
             //    warnings: true
             //}
+        }),
+         // Make sure this is after ExtractTextPlugin!
+        new PurifyCSSPlugin({
+            // Give paths to parse for rules. These should be absolute!
+            paths: glob.sync(path.join(__dirname, './*.html')),
+            minimize: true
         }),
         new FaviconsWebpackPlugin('./my-logo.jpg')
     ],
