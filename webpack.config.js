@@ -5,15 +5,17 @@ var HTMLWebpackPlugin = require('html-webpack-plugin');
 var AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
 var FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 var Visualizer = require('webpack-visualizer-plugin');
+var bootstrapEntryPoints = require('./webpack.bootstrap.config.js');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
 const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
 const cssDev = ['style-loader', 'css-loader?localIdentName=' + cssIdentifier, 'sass-loader'];
 const cssProd = ExtractTextPlugin.extract({
-        use: ['css-loader?localIdentName=' + cssIdentifier,  'sass-loader']
+        use: ['css-loader?minimize=true&localIdentName=' + cssIdentifier,  'sass-loader']
 });
 const cssConfig = isProd ? cssProd : cssDev;
 
+const bootstrapConfig = isProd ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
 var plugins = {
     commons: [
         new webpack.DllReferencePlugin({
@@ -45,6 +47,11 @@ var plugins = {
                 NODE_ENV: JSON.stringify("production") 
             }
         }),
+        new ExtractTextPlugin({
+            filename: '/css/[name]-style-[contenthash:10].css',
+            disable: !isProd,
+            allChunks: true
+        }),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: false,
             //comments: true,
@@ -53,7 +60,6 @@ var plugins = {
             //    warnings: true
             //}
         }),
-        new ExtractTextPlugin('style-[contenthash:10].css'),
         new FaviconsWebpackPlugin('./my-logo.jpg')
     ],
     dev: [
@@ -66,6 +72,7 @@ module.exports = {
     entry: {
         app: './src/index.js',
         about: './src/about.js',
+        bootstrap: bootstrapConfig,
         commons: ['react', 'react-dom']
     },
 //  externals: {
@@ -95,10 +102,19 @@ module.exports = {
             test: /\.(png|jpg|gif)$/,
             use: ['url-loader?limit=216000&name=images/[hash:12].[ext]'],
             exclude: /node_modules/
-        },{
+        }, {
             test: /\.(css|scss)$/,
             use: cssConfig,
             exclude: /node_modules/
-        }]
+        }, { 
+            test: /\.(woff2?|svg)$/, 
+            loader: 'url-loader?limit=10000&name=fonts/[name].[ext]' 
+        }, { 
+            test: /\.(ttf|eot)$/, 
+            loader: 'file-loader?name=fonts/[name].[ext]' 
+        }, { 
+            test:/bootstrap-sass[\/\\]assets[\/\\]javascripts[\/\\]/, 
+            loader: 'imports-loader?jQuery=jquery' 
+        },]
     }
 };
