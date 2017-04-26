@@ -23,6 +23,13 @@ const webpackConfig = {
 
 if (PRODUCTION) {
     webpackConfig.plugins.push(
+        new webpack.DefinePlugin({
+          "process.env": {
+            NODE_ENV: JSON.stringify("production")
+          }
+        })
+    );
+    webpackConfig.plugins.push(
         new webpack.optimize.UglifyJsPlugin({
             //comments: true,
             //mangle: false,
