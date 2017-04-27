@@ -50,7 +50,7 @@ var plugins = {
             }
         }),
         new ExtractTextPlugin({
-            filename: '/css/[name]-style-[contenthash:10].css',
+            filename: 'css/[name]-style-[contenthash:10].css',
             disable: !isProd,
             allChunks: true
         }),
