@@ -15,6 +15,7 @@ const cssDev = ['style-loader', 'css-loader?modules&localIdentName=' + cssIdenti
 const cssProd = ExtractTextPlugin.extract({
         use: ['css-loader?modules&minimize=true&localIdentName=' + cssIdentifier,  'sass-loader']
 });
+
 const cssConfig = isProd ? cssProd : cssDev;
 
 const bootstrapConfig = isProd ? bootstrapEntryPoints.prod : bootstrapEntryPoints.dev;
