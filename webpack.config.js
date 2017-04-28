@@ -10,7 +10,7 @@ const glob = require('glob');
 const PurifyCSSPlugin = require('purifycss-webpack');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
-const cssIdentifier = isProd ? '[hash:base64:10]' : '[path][name]---[local]';
+const cssIdentifier = isProd ? 'purify_[hash:base64:10]' : '[path][name]---[local]';
 const cssDev = ['style-loader', 'css-loader?modules&localIdentName=' + cssIdentifier, 'sass-loader'];
 const cssProd = ExtractTextPlugin.extract({
         use: ['css-loader?modules&minimize=true&localIdentName=' + cssIdentifier,  'sass-loader']
@@ -69,7 +69,10 @@ var plugins = {
             paths: glob.sync(path.join(__dirname, './*.html')).concat(
                 glob.sync(path.join(__dirname, './src/*.js'))
             ),
-            minimize: true
+            minimize: true,
+            purifyOptions: {
+                whitelist: ['*purify*']
+            }
         }),
         new FaviconsWebpackPlugin('./my-logo.jpg')
     ],
@@ -83,8 +86,7 @@ module.exports = {
     entry: {
         // According to HtmlWebpackPlugin config, it's possible that 
         // not all entry chunks are included into index.html
-        app: [isProd ? 'bootstrap-loader/extractStyles' : 'bootstrap-loader', './src/index.js'], // Since we're only including app and commons chunks,
-        // we'll have to specify bootstrap-loader in the app chunk in order for bootstrap to get applied.
+        app: ['./src/index.js'],
         about: './src/about.js',
         bootstrap: bootstrapConfig,
         commons: ['react', 'react-dom']
