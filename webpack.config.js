@@ -67,7 +67,7 @@ var plugins = {
         new PurifyCSSPlugin({
             // Give paths to parse for rules. These should be absolute!
             paths: glob.sync(path.join(__dirname, './*.html')).concat(
-                glob.sync(path.join(__dirname, './src/*.js'))
+                glob.sync(path.join(__dirname, './src/**/*.js'))
             ),
             minimize: true,
             moduleExtensions: ['.js'], //An array of file extensions for determining used classes within node_modules
