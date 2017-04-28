@@ -29,7 +29,7 @@ var plugins = {
             template: './index-template.html',
             // commons should be included before app, 
             // but html webpack plugin will take care of this.
-            chunks: ['app', 'commons'], // select the entry items to include
+            chunks: ['app', 'commons', 'bootstrap'], // select the entry items to include
             minify: {
                 collapseWhitespace: isProd
             }
@@ -83,7 +83,7 @@ module.exports = {
     entry: {
         // According to HtmlWebpackPlugin config, it's possible that 
         // not all entry chunks are included into index.html
-        app: ['bootstrap-loader', './src/index.js'], // Since we're only including app and commons chunks,
+        app: ['bootstrap-loader/extractStyles', './src/index.js'], // Since we're only including app and commons chunks,
         // we'll have to specify bootstrap-loader in the app chunk in order for bootstrap to get applied.
         about: './src/about.js',
         bootstrap: bootstrapConfig,
