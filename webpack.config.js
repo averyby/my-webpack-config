@@ -70,6 +70,7 @@ var plugins = {
                 glob.sync(path.join(__dirname, './src/*.js'))
             ),
             minimize: true,
+            moduleExtensions: ['.js'], //An array of file extensions for determining used classes within node_modules
             purifyOptions: {
                 whitelist: ['*purify*']
             }
