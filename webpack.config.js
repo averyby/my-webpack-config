@@ -59,9 +59,11 @@ var plugins = {
             sourceMap: false,
             //comments: true,
             //mangle: false,
-            //compress: {
-            //    warnings: true
-            //}
+            compress: {
+               warnings: false,
+               drop_console: true,
+               drop_debugger: true
+            }
         }),
          // Make sure this is after ExtractTextPlugin!
         new PurifyCSSPlugin({
