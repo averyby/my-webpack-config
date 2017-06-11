@@ -11,9 +11,9 @@ const PurifyCSSPlugin = require('purifycss-webpack');
 
 const isProd = process.env.NODE_ENV === 'production'; //true or false
 const cssIdentifier = isProd ? 'purify_[hash:base64:10]' : '[path][name]---[local]';
-const cssDev = ['style-loader', 'css-loader?modules&localIdentName=' + cssIdentifier, 'sass-loader', 'postcss-loader'];
+const cssDev = ['style-loader', 'css-loader?localIdentName=' + cssIdentifier, 'sass-loader', 'postcss-loader'];
 const cssProd = ExtractTextPlugin.extract({
-        use: ['css-loader?modules&minimize=true&localIdentName=' + cssIdentifier,  'sass-loader', 'postcss-loader']
+        use: ['css-loader?minimize=true&localIdentName=' + cssIdentifier,  'sass-loader', 'postcss-loader']
 });
 
 const cssConfig = isProd ? cssProd : cssDev;
