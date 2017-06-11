@@ -123,8 +123,7 @@ module.exports = {
             exclude: /node_modules/
         }, {
             test: /\.(css|scss)$/,
-            use: cssConfig,
-            exclude: /node_modules/
+            use: cssConfig
         }, { 
             test: /\.(woff2?|svg)$/, 
             loader: 'url-loader?limit=10000&name=fonts/[name].[ext]' 
